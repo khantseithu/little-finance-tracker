@@ -1,10 +1,11 @@
-import { Text, View } from "react-native";
-import { Button } from 'react-native-paper';
+import DashboardScreen from "@/components/DashboardScreen";
+import { SafeAreaView } from "react-native";
+
 export default function Index() {
   return (
-    <Button mode="contained" onPress={() => console.log('Pressed')}>
-      Press me
-    </Button>
+    <SafeAreaView>
+      <DashboardScreen />
+    </SafeAreaView>
   );
 }
 
