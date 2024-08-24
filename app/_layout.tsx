@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
-import { PaperProvider } from 'react-native-paper';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import useAuthStore from '@/store/userStore';
-import pb from '@/api/pbservice';
+import { PaperProvider } from "react-native-paper";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import useAuthStore from "@/store/userStore";
+import pb from "@/api/pbservice";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const queryClient = new QueryClient();
 
@@ -26,12 +27,12 @@ export default function RootLayout() {
       setUser(pb.authStore.model);
     }
 
-    const inAuthGroup = segments[0] === 'auth';
+    const inAuthGroup = segments[0] === "auth";
 
     if (!isAuth && !inAuthGroup) {
-      router.replace('/auth/login');
+      router.replace("/auth/login");
     } else if (isAuth && inAuthGroup) {
-      router.replace('/');
+      router.replace("/");
     }
   }, [user, segments]);
 
@@ -44,11 +45,18 @@ export default function RootLayout() {
         }}
         onSuccess={() => queryClient.resumePausedMutations()}
       >
-        <Stack>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
-        </Stack>
+        <SafeAreaProvider>
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{
+                headerTitle: "Dashboard",
+              }}
+            />
+            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+          </Stack>
+        </SafeAreaProvider>
       </PersistQueryClientProvider>
     </PaperProvider>
   );

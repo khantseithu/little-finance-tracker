@@ -3,9 +3,8 @@ import { SafeAreaView } from "react-native";
 
 export default function Index() {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <DashboardScreen />
     </SafeAreaView>
   );
 }
-
