@@ -112,12 +112,12 @@ export default function TabsLayout() {
         />
         {/* saving goals */}
         <Tabs.Screen
-          name="savings"
+          name="savingGoals"
           options={{
             tabBarLabel: "Savings",
             tabBarIcon: ({ color, size, focused }) => (
               <TabIcon
-                name="piggy-bank"
+                name="bank"
                 color={color}
                 size={size - 2}
                 focused={focused}
