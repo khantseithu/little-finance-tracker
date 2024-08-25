@@ -47,12 +47,7 @@ export default function RootLayout() {
       >
         <SafeAreaProvider>
           <Stack>
-            <Stack.Screen
-              name="index"
-              options={{
-                headerTitle: "Dashboard",
-              }}
-            />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="auth/login" options={{ headerShown: false }} />
             <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
           </Stack>

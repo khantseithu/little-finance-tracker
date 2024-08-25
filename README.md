@@ -1,54 +1,83 @@
-> Edited for use in IDX on 07/09/12
+# Little Finance Tracker
 
-# Welcome to your Expo app 👋
+Little Finance Tracker is a mobile application designed to help users manage their personal finances easily and efficiently. Built with React Native and Expo, this app provides a user-friendly interface for tracking expenses, income, budgets, and savings goals.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Features
 
-## Get started
+- **User Authentication**: Secure login and registration system.
+- **Dashboard**: Overview of financial status, recent transactions, and quick actions.
+- **Expense Tracking**: Log and categorize expenses with ease.
+- **Income Management**: Record and track various income sources.
+- **Budget Planning**: Set and monitor budgets for different categories.
+- **Savings Goals**: Create and track progress towards savings targets.
+- **Profile Management**: User profile customization and settings.
 
-#### Android
+## Technologies Used
 
-Android previews are defined as a `workspace.onStart` hook and started as a vscode task when the workspace is opened/started.
+- React Native
+- Expo
+- Expo Router
+- React Native Paper
+- Zustand (State Management)
+- TanStack Query (React Query)
+- PocketBase (Backend)
 
-Note, if you can't find the task, either:
-- Rebuild the environment (using command palette: `IDX: Rebuild Environment`), or
-- Run `npm run android -- --tunnel` command manually run android and see the output in your terminal. The device should pick up this new command and switch to start displaying the output from it.
+## Getting Started
 
-In the output of this command/task, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI
 
-You'll also find options to open the app's developer menu, reload the app, and more.
+### Installation
 
-#### Web
+1. Clone the repository:
 
-Web previews will be started and managred automatically. Use the toolbar to manually refresh.
+   ```
+   git clone https://github.com/khantseithu/little-finance-tracker.git
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+2. Navigate to the project directory:
 
-## Get a fresh project
+   ```
+   cd little-finance-tracker
+   ```
 
-When you're ready, run:
+3. Install dependencies:
 
-```bash
-npm run reset-project
-```
+   ```
+   npm install
+   ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   or
 
-## Learn more
+   ```
+   yarn install
+   ```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Start the Expo development server:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+   ```
+   expo start
+   ```
 
-## Join the community
+5. Use the Expo Go app on your mobile device to scan the QR code and run the app.
 
-Join our community of developers creating universal apps.
+## Contributing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Thanks to the React Native and Expo communities for their excellent documentation and support.
+
+## Contact
+
+If you have any questions or feedback, please open an issue on this repository.
+
+Happy tracking!
