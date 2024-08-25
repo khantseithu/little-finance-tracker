@@ -14,6 +14,9 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import { format } from "date-fns";
+import { useCreateIncome } from "@/hooks/useIncomeMutations";
+import { useQuery } from "@tanstack/react-query";
+import { getIncomes } from "@/api/fetchers";
 
 type Income = {
   id: string;
@@ -67,11 +70,11 @@ const initialIncomes: Income[] = [
 ];
 
 const categories: Category[] = [
-  { label: "Food", value: "Food" },
-  { label: "Transport", value: "Transport" },
-  { label: "Entertainment", value: "Entertainment" },
-  { label: "Bills", value: "Bills" },
-  { label: "Shopping", value: "Shopping" },
+  { label: "Salary", value: "Salary" },
+  { label: "Freelance", value: "Freelance" },
+  { label: "Investment", value: "Investment" },
+  { label: "Business", value: "Business" },
+  { label: "Other", value: "Other" },
 ];
 
 const IncomeScreen: React.FC = () => {
@@ -84,6 +87,17 @@ const IncomeScreen: React.FC = () => {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [editedIncome, setEditedIncome] = useState<Income | null>(null);
+  const { mutate: createIncome, isPending, error } = useCreateIncome();
+  const {
+    data: incomesData,
+    isLoading,
+    isError,
+    error: incomesError,
+  } = useQuery({
+    queryKey: ["incomes"],
+    queryFn: getIncomes,
+    staleTime: 0,
+  });
 
   const showModal = () => setVisible(true);
   const hideModal = () => {
@@ -114,6 +128,7 @@ const IncomeScreen: React.FC = () => {
       description,
     };
 
+    createIncome(newIncome);
     if (editedIncome) {
       setIncomes(
         incomes.map((income) =>
@@ -140,19 +155,24 @@ const IncomeScreen: React.FC = () => {
     setIncomes(incomes.filter((income) => income.id !== id));
   };
 
-  const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
+  const totalIncome = incomesData?.reduce(
+    (sum, income) => sum + income.amount,
+    0
+  );
 
   return (
     <View style={styles.container}>
       <Card style={styles.totalCard}>
         <Card.Content>
           <Text style={styles.totalTitle}>Total Income</Text>
-          <Text style={styles.totalAmount}>{totalIncome.toFixed(2)} Ks</Text>
+          <Text style={styles.totalAmount}>
+            {totalIncome?.toFixed(0) || 0} Ks
+          </Text>
         </Card.Content>
       </Card>
 
       <ScrollView>
-        {incomes.map((income) => (
+        {incomesData?.map((income) => (
           <List.Item
             key={income.id}
             title={() => <Text style={styles.itemTitle}>{income.source}</Text>}
@@ -275,6 +295,7 @@ const styles = StyleSheet.create({
   itemDescription: {
     fontSize: 14,
     color: "#666",
+    marginTop: 8,
   },
   rightContent: {
     flexDirection: "row",

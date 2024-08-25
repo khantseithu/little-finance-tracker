@@ -44,14 +44,14 @@ export default function RootLayout() {
 
     const inAuthGroup = segments[0] === "auth";
 
-    if (!isAuth && !inAuthGroup) {
+    if (!isAuth && !user && !inAuthGroup) {
       router.replace("/auth/login");
     } else if (isAuth && inAuthGroup) {
       router.replace("/");
     }
 
     console.log("User", user);
-  }, [user, segments]);
+  }, [user, segments, pb?.authStore]);
 
   if (!fontsLoaded) {
     return null;

@@ -1,4 +1,5 @@
 import pb from "@/api/pbservice";
+import useAuthStore from "@/store/userStore";
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Image } from "react-native";
 import {
@@ -25,6 +26,7 @@ const ProfileScreen: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const setUserStore = useAuthStore((state: any) => state.setUser);
 
   const handleEdit = () => {
     setEditing(!editing);
@@ -34,7 +36,7 @@ const ProfileScreen: React.FC = () => {
   const handleLogout = () => {
     // Implement logout functionality
     pb.authStore.clear();
-
+    setUserStore(null);
     console.log("Logging out...");
   };
 
@@ -147,7 +149,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    marginBottom: 80,
   },
   header: {
     height: 200,
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
   versionText: {
     textAlign: "center",
     color: "#666",
-    marginBottom: 16,
+    marginBottom: 80,
   },
 });
 

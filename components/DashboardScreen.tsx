@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Text, Card, Button, ProgressBar, List, FAB } from "react-native-paper";
 import { PieChart } from "react-native-svg-charts";
 import { format } from "date-fns";
 import { Link } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import { getExpenses, getIncomes } from "@/api/fetchers";
+import { G, Text as SvgText } from "react-native-svg";
 
 // Mock data
 const userData = {
@@ -51,14 +54,95 @@ const userData = {
 };
 
 const DashboardScreen: React.FC = () => {
+  const [userData, setUserData] = useState({
+    balance: 0,
+    monthlyIncome: 0,
+    monthlyExpenses: 0,
+    budgetProgress: 0,
+    recentTransactions: [],
+  });
+  const {
+    data: incomesData,
+    isLoading: incomesLoading,
+    isError: incomesError,
+  } = useQuery({
+    queryKey: ["incomes"],
+    queryFn: getIncomes,
+    staleTime: 0,
+  });
+
   const pieData = [
-    { value: userData.monthlyExpenses, color: "#FF6B6B", key: "expenses" },
     {
-      value: userData.monthlyIncome - userData.monthlyExpenses,
-      color: "#4ECDC4",
-      key: "savings",
+      key: 1,
+      value: userData?.monthlyIncome - userData?.monthlyExpenses,
+      svg: { fill: "#600080" },
+      label: "Income",
+    },
+    {
+      key: 2,
+      value: userData?.monthlyExpenses,
+      svg: { fill: "#9900cc" },
+      label: "Expenses",
     },
   ];
+
+  const {
+    data: expensesData,
+    isLoading: expensesLoading,
+    isError: expensesError,
+  } = useQuery({
+    queryKey: ["expenses"],
+    queryFn: getExpenses,
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (incomesData && expensesData) {
+      console.log("Incomes data", incomesData);
+      console.log("Expenses data", expensesData);
+
+      // Calculate user data
+      const monthlyIncome = incomesData.reduce(
+        (total, income) => total + income.amount,
+        0
+      );
+
+      const monthlyExpenses = expensesData.reduce(
+        (total, expense) => total + expense.amount,
+        0
+      );
+
+      const balance = monthlyIncome - monthlyExpenses;
+      const budgetProgress = monthlyExpenses / monthlyIncome;
+
+      const recentTransactions = [
+        ...incomesData.map((income) => ({
+          ...income,
+          type: "income",
+        })),
+        ...expensesData.map((expense) => ({
+          ...expense,
+          type: "expense",
+        })),
+      ].sort((a, b) => b.date - a.date);
+
+      setUserData({
+        balance,
+        monthlyIncome,
+        monthlyExpenses,
+        budgetProgress,
+        recentTransactions,
+      });
+    }
+  }, [incomesData, expensesData]);
+
+  if (incomesLoading || expensesLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (incomesError || expensesError) {
+    return <Text>Error fetching data</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -67,7 +151,7 @@ const DashboardScreen: React.FC = () => {
           <Card.Content>
             <Text style={styles.balanceTitle}>Current Balance</Text>
             <Text style={styles.balanceAmount}>
-              ${userData.balance.toFixed(2)}
+              ${userData.balance.toFixed(0)}
             </Text>
           </Card.Content>
         </Card>
@@ -77,7 +161,7 @@ const DashboardScreen: React.FC = () => {
             <Card.Content>
               <Text style={styles.summaryTitle}>Monthly Income</Text>
               <Text style={styles.summaryAmount}>
-                ${userData.monthlyIncome.toFixed(2)}
+                ${userData.monthlyIncome.toFixed(0)}
               </Text>
             </Card.Content>
           </Card>
@@ -85,7 +169,7 @@ const DashboardScreen: React.FC = () => {
             <Card.Content>
               <Text style={styles.summaryTitle}>Monthly Expenses</Text>
               <Text style={styles.summaryAmount}>
-                ${userData.monthlyExpenses.toFixed(2)}
+                ${userData.monthlyExpenses.toFixed(0)}
               </Text>
             </Card.Content>
           </Card>
@@ -99,7 +183,9 @@ const DashboardScreen: React.FC = () => {
               data={pieData}
               innerRadius="70%"
               padAngle={0.02}
-            />
+            >
+              <Labels />
+            </PieChart>
           </Card.Content>
         </Card>
 
@@ -112,7 +198,7 @@ const DashboardScreen: React.FC = () => {
               style={styles.budgetProgress}
             />
             <Text style={styles.budgetText}>
-              {(userData.budgetProgress * 100).toFixed(0)}% of budget used
+              {(userData?.budgetProgress * 100).toFixed(0)}% of budget used
             </Text>
           </Card.Content>
         </Card>
@@ -120,10 +206,10 @@ const DashboardScreen: React.FC = () => {
         <Card style={styles.transactionsCard}>
           <Card.Content>
             <Text style={styles.transactionsTitle}>Recent Transactions</Text>
-            {userData.recentTransactions.map((transaction) => (
+            {userData?.recentTransactions.map((transaction) => (
               <List.Item
                 key={transaction.id}
-                title={transaction.category}
+                title={transaction.category || transaction.source}
                 description={format(transaction.date, "MMM dd, yyyy")}
                 right={() => (
                   <Text
@@ -134,7 +220,7 @@ const DashboardScreen: React.FC = () => {
                     }
                   >
                     {transaction.type === "expense" ? "-" : "+"}$
-                    {transaction.amount.toFixed(2)}
+                    {transaction.amount.toFixed(0)}
                   </Text>
                 )}
               />
@@ -142,7 +228,7 @@ const DashboardScreen: React.FC = () => {
           </Card.Content>
         </Card>
 
-        <View style={styles.navigationButtons}>
+        {/* <View style={styles.navigationButtons}>
           <Link href="/expenses" asChild>
             <Button mode="outlined" style={styles.navButton}>
               Expenses
@@ -163,7 +249,7 @@ const DashboardScreen: React.FC = () => {
               Savings Goals
             </Button>
           </Link>
-        </View>
+        </View> */}
       </ScrollView>
 
       <FAB
@@ -269,3 +355,25 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
+
+const Labels = ({ slices }) => {
+  return slices.map((slice, index) => {
+    const { labelCentroid, data } = slice;
+    return (
+      <G key={index}>
+        <SvgText
+          x={labelCentroid[0]}
+          y={labelCentroid[1]}
+          fill={"white"}
+          textAnchor={"middle"}
+          alignmentBaseline={"middle"}
+          fontSize={14}
+          stroke={"black"}
+          strokeWidth={0.2}
+        >
+          {data.label}
+        </SvgText>
+      </G>
+    );
+  });
+};
