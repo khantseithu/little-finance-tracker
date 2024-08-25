@@ -65,6 +65,7 @@ const SavingGoalsScreen = () => {
 
         <TextInput
           style={styles.input}
+          mode="outlined"
           placeholder="Target Amount"
           value={targetAmount}
           onChangeText={setTargetAmount}

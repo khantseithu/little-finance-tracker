@@ -14,9 +14,12 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import { format } from "date-fns";
+import pb from "@/api/pbservice";
+import { useCreateExpense } from "@/hooks/useExpenseMutations";
 
-type Expense = {
+export type Expense = {
   id: string;
+  user?: string;
   date: Date;
   category: string;
   amount: number;
@@ -84,6 +87,7 @@ const ExpensesScreen: React.FC = () => {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const { mutate, isPending } = useCreateExpense();
 
   const showModal = () => setVisible(true);
   const hideModal = () => {
@@ -113,6 +117,8 @@ const ExpensesScreen: React.FC = () => {
       amount: parseFloat(amount),
       description,
     };
+    const { id, ...expenseWithoutId } = newExpense;
+    mutate(expenseWithoutId);
 
     if (editingExpense) {
       setExpenses(
@@ -244,7 +250,7 @@ const ExpensesScreen: React.FC = () => {
             style={styles.saveButton}
             labelStyle={{ color: "white" }}
           >
-            Save
+            {editingExpense ? "Save" : isPending ? "Adding..." : "Add"}
           </Button>
         </Modal>
       </Portal>

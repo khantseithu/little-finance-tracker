@@ -178,8 +178,7 @@ const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
-    marginBottom: 80,
+    backgroundColor: "#ffffff",
   },
   balanceCard: {
     margin: 16,
@@ -265,7 +264,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     margin: 16,
     right: 0,
-    bottom: 0,
+    bottom: 80,
   },
 });
 

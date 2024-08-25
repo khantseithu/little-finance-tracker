@@ -1,3 +1,4 @@
+import pb from "@/api/pbservice";
 import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Image } from "react-native";
 import {
@@ -32,6 +33,8 @@ const ProfileScreen: React.FC = () => {
 
   const handleLogout = () => {
     // Implement logout functionality
+    pb.authStore.clear();
+
     console.log("Logging out...");
   };
 
@@ -143,7 +146,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#ffffff",
     marginBottom: 80,
   },
   header: {

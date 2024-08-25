@@ -37,6 +37,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     const isAuth = pb.authStore.isValid;
+    console.log("Is auth", isAuth);
     if (isAuth && !user) {
       setUser(pb.authStore.model);
     }
@@ -48,6 +49,8 @@ export default function RootLayout() {
     } else if (isAuth && inAuthGroup) {
       router.replace("/");
     }
+
+    console.log("User", user);
   }, [user, segments]);
 
   if (!fontsLoaded) {
@@ -56,12 +59,12 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={lightTheme}>
-      <PersistQueryClientProvider
+      <QueryClientProvider
         client={queryClient}
-        persistOptions={{
-          persister: asyncPersist,
-        }}
-        onSuccess={() => queryClient.resumePausedMutations()}
+        // persistOptions={{
+        //   persister: asyncPersist,
+        // }}
+        // onSuccess={() => queryClient.resumePausedMutations()}
       >
         <SafeAreaProvider>
           <Stack>
@@ -70,7 +73,7 @@ export default function RootLayout() {
             <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
           </Stack>
         </SafeAreaProvider>
-      </PersistQueryClientProvider>
+      </QueryClientProvider>
     </PaperProvider>
   );
 }

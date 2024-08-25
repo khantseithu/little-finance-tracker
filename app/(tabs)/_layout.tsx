@@ -32,9 +32,11 @@ export default function TabsLayout() {
           tabBarStyle: styles.tabBar,
           tabBarBackground: () => (
             <BlurView
-              tint="light"
+              // tint="regular"
               intensity={80}
-              // style={StyleSheet.absoluteFill}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+              }}
             />
           ),
           tabBarShowLabel: false,
@@ -133,7 +135,7 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "transparent",
+    backgroundColor: "white",
   },
   tabBar: {
     position: "absolute",
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     paddingHorizontal: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "white",
     borderTopWidth: 0,
     elevation: 0,
     shadowColor: "#000",
