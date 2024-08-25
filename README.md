@@ -20,7 +20,7 @@ Little Finance Tracker is a mobile application designed to help users manage the
 - React Native Paper
 - Zustand (State Management)
 - TanStack Query (React Query)
-- PocketBase (Backend)
+- Golang (Backend)
 
 ## Getting Started
 
