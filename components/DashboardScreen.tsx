@@ -158,7 +158,7 @@ const DashboardScreen: React.FC = () => {
               Budgets
             </Button>
           </Link>
-          <Link href="/savings-goals" asChild>
+          <Link href="/savingGoals" asChild>
             <Button mode="outlined" style={styles.navButton}>
               Savings Goals
             </Button>

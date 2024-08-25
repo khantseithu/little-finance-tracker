@@ -10,12 +10,16 @@ import {
   Portal,
   Modal,
   IconButton,
+  Divider,
 } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import { format } from "date-fns";
 import pb from "@/api/pbservice";
 import { useCreateExpense } from "@/hooks/useExpenseMutations";
+import { useQuery } from "@tanstack/react-query";
+import { getExpenses } from "@/api/fetchers";
+import AppLoading from "expo-app-loading";
 
 export type Expense = {
   id: string;
@@ -88,6 +92,11 @@ const ExpensesScreen: React.FC = () => {
   const [description, setDescription] = useState("");
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const { mutate, isPending } = useCreateExpense();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["expenses"],
+    queryFn: getExpenses,
+    staleTime: 0,
+  });
 
   const showModal = () => setVisible(true);
   const hideModal = () => {
@@ -146,54 +155,63 @@ const ExpensesScreen: React.FC = () => {
     setExpenses(expenses.filter((expense) => expense.id !== id));
   };
 
-  const totalExpenses = expenses.reduce(
-    (sum, expense) => sum + expense.amount,
-    0
-  );
+  const totalExpenses = data?.reduce((sum, expense) => sum + expense.amount, 0);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error fetching data</Text>;
+  }
 
   return (
     <View style={styles.container}>
       <Card style={styles.totalCard}>
         <Card.Content>
           <Text style={styles.totalTitle}>Total Expenses</Text>
-          <Text style={styles.totalAmount}>{totalExpenses.toFixed(2)} Ks</Text>
+          <Text style={styles.totalAmount}>
+            {totalExpenses?.toFixed(0) || 0} Ks
+          </Text>
         </Card.Content>
       </Card>
 
       <ScrollView>
-        {expenses.map((expense) => (
-          <List.Item
-            key={expense.id}
-            title={() => (
-              <Text style={styles.itemTitle}>{expense.category}</Text>
-            )}
-            description={() => (
-              <Text style={styles.itemDescription}>
-                {`${format(expense.date, "MMM dd, yyyy")} - ${
-                  expense.description
-                }`}
-              </Text>
-            )}
-            right={() => (
-              <View style={styles.rightContent}>
+        {data?.map((expense) => (
+          <View key={expense.id} style={styles.itemContainer}>
+            <List.Item
+              title={() => (
+                <Text style={styles.itemTitle}>{expense.category}</Text>
+              )}
+              description={() => (
                 <Text style={styles.itemDescription}>
-                  {expense.amount.toFixed(2)} Ks
+                  {`${format(expense.date, "MMM dd, yyyy")} - ${
+                    expense.description
+                  }`}
                 </Text>
-                <IconButton
-                  icon="pencil"
-                  size={20}
-                  onPress={() => handleEdit(expense)}
-                  iconColor="#6200EE"
-                />
-                <IconButton
-                  icon="delete"
-                  size={20}
-                  onPress={() => handleDelete(expense.id)}
-                  iconColor="red"
-                />
-              </View>
-            )}
-          />
+              )}
+              right={() => (
+                <View style={styles.rightContent}>
+                  <Text style={styles.amountText}>
+                    {expense.amount.toFixed(2)} Ks
+                  </Text>
+                  <IconButton
+                    icon="pencil"
+                    size={20}
+                    onPress={() => handleEdit(expense)}
+                    iconColor="#6200EE"
+                  />
+                  <IconButton
+                    icon="delete"
+                    size={20}
+                    onPress={() => handleDelete(expense.id)}
+                    iconColor="red"
+                  />
+                </View>
+              )}
+            />
+            <Divider />
+          </View>
         ))}
       </ScrollView>
 
@@ -286,6 +304,15 @@ const styles = StyleSheet.create({
   itemDescription: {
     fontSize: 14,
     color: "#666",
+  },
+  itemContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  amountText: {
+    fontSize: 14,
+    color: "#333",
+    marginRight: 10,
   },
   rightContent: {
     flexDirection: "row",

@@ -5,6 +5,8 @@ import { Link, useRouter } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import pb from "@/api/pbservice";
 import useAuthStore from "@/store/userStore";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
 
 interface AuthScreenProps {
   mode: "login" | "signup";
@@ -23,6 +25,10 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
   const [username, setUsername] = useState<string>("");
   const router = useRouter();
   const setUser = useAuthStore((state: any) => state.setUser);
+
+  const [fontsLoaded] = useFonts({
+    reckless: require("../assets/fonts/RecklessTRIAL-Bold.otf"),
+  });
 
   const authMutation = useMutation({
     mutationFn: async (data: AuthData) => {
@@ -56,6 +62,9 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
     }
     authMutation.mutate(data);
   };
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   return (
     <View style={styles.container}>
@@ -120,6 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    fontFamily: "reckless",
     textAlign: "center",
   },
   input: {

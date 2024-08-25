@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 
@@ -19,6 +19,28 @@ const TabIcon = ({ name, color, size, focused }: TabIconProps) => (
 );
 
 export default function TabsLayout() {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -29,10 +51,9 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarActiveTintColor: "#6200EE",
           tabBarInactiveTintColor: "gray",
-          tabBarStyle: styles.tabBar,
+          tabBarStyle: isKeyboardVisible ? { display: "none" } : styles.tabBar,
           tabBarBackground: () => (
             <BlurView
-              // tint="regular"
               intensity={80}
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -112,7 +133,6 @@ export default function TabsLayout() {
             ),
           }}
         />
-        {/* saving goals */}
         <Tabs.Screen
           name="savingGoals"
           options={{
