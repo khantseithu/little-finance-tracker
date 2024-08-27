@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
-import { Stack, useRouter, useSegments } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Slot,
+  SplashScreen,
+  Stack,
+  useRootNavigationState,
+  useRouter,
+  useSegments,
+} from "expo-router";
 import { DefaultTheme, PaperProvider } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
@@ -14,6 +21,7 @@ import {
   Lato_400Regular,
   Inter_900Black,
 } from "@expo-google-fonts/dev";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const queryClient = new QueryClient();
 
@@ -31,11 +39,23 @@ export default function RootLayout() {
   const router = useRouter();
   const user = useAuthStore((state: any) => state.user);
   const setUser = useAuthStore((state: any) => state.setUser);
-  let [fontsLoaded] = useFonts({
-    Inter_900Black,
-  });
+  const [isMounted, setIsMounted] = useState(false);
+
+  const rootNavigationState = useRootNavigationState();
+
+  if (!rootNavigationState?.key) return null;
+
+  // let [fontsLoaded] = useFonts({
+  //   Inter_900Black,
+  // });
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const isAuth = pb.authStore.isValid;
     console.log("Is auth", isAuth);
     if (isAuth && !user) {
@@ -51,11 +71,27 @@ export default function RootLayout() {
     }
 
     console.log("User", user);
-  }, [user, segments, pb?.authStore]);
+  }, [isMounted, user, segments, pb?.authStore]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  // useEffect(() => {
+  //   configGoogleSignIn(); // will execute everytime the component mounts
+  // }, []);
+
+  // const configGoogleSignIn = () => {
+  //   GoogleSignin.configure();
+  // };
+
+  // if (fontsLoaded) {
+  //   SplashScreen.hideAsync();
+  // }
+
+  // if (!fontsLoaded) {
+  //   return null;
+  // }
+
+  // if (!fontsLoaded) {
+  //   return <Slot />;
+  // }
 
   return (
     <PaperProvider theme={lightTheme}>

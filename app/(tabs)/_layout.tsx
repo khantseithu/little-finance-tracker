@@ -168,13 +168,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopWidth: 0,
     elevation: 0,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 24,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 10,
+    // },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 24,
   },
   iconContainer: {
     width: 40,
